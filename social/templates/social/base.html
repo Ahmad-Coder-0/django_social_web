@@ -1,0 +1,105 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl"
+      x-data="{ darkMode: localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches) }"
+      x-init="$watch('darkMode', val => localStorage.theme = val ? 'dark' : 'light')"
+      :class="{ 'dark': darkMode }">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}شبکه اجتماعی{% endblock %}</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Vazirmatn', 'system-ui', 'sans-serif'] },
+        },
+      },
+    };
+  </script>
+  <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <style>
+    .form-input {
+      width: 100%;
+      border-radius: 0.5rem;
+      border: 1px solid #d4d4d8;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.9rem;
+      background: #fff;
+    }
+    .dark .form-input {
+      background: #27272a;
+      border-color: #3f3f46;
+      color: #f4f4f5;
+    }
+    .form-input:focus {
+      outline: 2px solid #6366f1;
+      outline-offset: 1px;
+      border-color: transparent;
+    }
+    .errorlist {
+      color: #b91c1c;
+      font-size: 0.8rem;
+      margin-top: 0.25rem;
+      list-style: none;
+      padding: 0;
+    }
+    .helptext {
+      color: #71717a;
+      font-size: 0.75rem;
+      margin-top: 0.25rem;
+      display: block;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-zinc-100 font-sans text-zinc-900 transition-colors duration-200 dark:bg-zinc-900 dark:text-zinc-100">
+  <header class="sticky top-0 z-20 border-b border-zinc-200 bg-white/90 backdrop-blur transition-colors duration-200 dark:border-zinc-800 dark:bg-zinc-900/90">
+    <nav class="mx-auto flex max-w-2xl items-center justify-between gap-3 px-4 py-3">
+      <a href="{% url 'social:feed' %}" class="text-lg font-bold text-indigo-600 dark:text-indigo-400">شبکه</a>
+
+      <div class="flex items-center gap-2 text-sm">
+        <a href="{% url 'social:search' %}" class="rounded-lg px-3 py-1.5 text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800">جستجو</a>
+        {% if user.is_authenticated %}
+          <a href="{% url 'social:notifications' %}" class="relative rounded-lg px-3 py-1.5 text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+             hx-get="{% url 'social:notifications_count' %}" hx-trigger="load, every 30s" hx-swap="outerHTML">
+            اعلان‌ها
+            <span id="notif-badge" class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-600 text-[10px] text-white hidden">0</span>
+          </a>
+          <a href="{% url 'social:profile' user.username %}" class="rounded-lg px-3 py-1.5 text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800">پروفایل</a>
+          <form method="post" action="{% url 'social:logout' %}" class="inline">
+            {% csrf_token %}
+            <button type="submit" class="rounded-lg px-3 py-1.5 text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800">خروج</button>
+          </form>
+        {% else %}
+          <a href="{% url 'social:login' %}" class="rounded-lg px-3 py-1.5 text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800">ورود</a>
+          <a href="{% url 'social:signup' %}" class="rounded-lg bg-indigo-600 px-3 py-1.5 text-white hover:bg-indigo-700">ثبت‌نام</a>
+        {% endif %}
+
+        <button @click="darkMode = !darkMode" class="rounded-lg p-2 text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800" title="تغییر حالت نمایش">
+          <span x-show="!darkMode">🌙</span>
+          <span x-show="darkMode" style="display: none;">☀️</span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="mx-auto max-w-2xl px-4 py-6">
+    {% if messages %}
+      <div class="mb-4 space-y-2">
+        {% for message in messages %}
+          <div class="rounded-lg border px-4 py-2 text-sm {% if message.tags == 'error' %}border-red-200 bg-red-50 text-red-700 dark:border-red-900 dark:bg-red-950 dark:text-red-350{% elif message.tags == 'success' %}border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-350{% else %}border-zinc-200 bg-white text-zinc-700 dark:border-zinc-800 dark:bg-zinc-800 dark:text-zinc-300{% endif %}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

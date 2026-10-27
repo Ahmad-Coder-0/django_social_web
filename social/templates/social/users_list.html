@@ -1,0 +1,53 @@
+{% extends "social/base.html" %}
+{% block title %}کاربران{% endblock %}
+
+{% block content %}
+  <h1 class="mb-4 text-lg font-bold text-zinc-800 dark:text-zinc-100">کاربران</h1>
+
+  <form method="get" class="mb-5">
+    <div class="relative">
+      <input type="search" name="q" value="{{ query }}" placeholder="جستجوی کاربران…"
+             class="form-input pr-10 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-200" autocomplete="off">
+      <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+        <svg class="h-5 w-5 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+      </div>
+    </div>
+  </form>
+
+  <div class="space-y-3">
+    {% for u in users %}
+      {% if u != user %}
+        <div class="flex items-center justify-between rounded-xl border border-zinc-200 bg-white px-4 py-3 shadow-sm transition-colors duration-200 dark:border-zinc-800 dark:bg-zinc-800">
+          <div class="flex items-center gap-3">
+            {% include "social/_avatar.html" with u=u size="h-10 w-10" %}
+            <div class="min-w-0">
+              <a href="{% url 'social:profile' u.username %}" class="font-semibold text-zinc-800 hover:underline dark:text-zinc-200">
+                {{ u.get_full_name|default:u.username }}
+              </a>
+              <p class="text-sm text-zinc-500 dark:text-zinc-400">@{{ u.username }}</p>
+            </div>
+          </div>
+          <div>
+            {% if user.is_authenticated %}
+              <form method="post" action="{% url 'social:follow_toggle' u.username %}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                {% if u.pk in following_ids %}
+                  <button type="submit" class="rounded-lg border border-zinc-300 px-4 py-2 text-sm hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-700">لغو دنبال کردن</button>
+                {% else %}
+                  <button type="submit" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm text-white hover:bg-indigo-700">دنبال کردن</button>
+                {% endif %}
+              </form>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+    {% empty %}
+      <p class="rounded-xl border border-dashed border-zinc-300 bg-white px-6 py-8 text-center text-sm text-zinc-500 dark:border-zinc-800 dark:bg-zinc-800 dark:text-zinc-400">
+        کاربری یافت نشد.
+      </p>
+    {% endfor %}
+  </div>
+{% endblock %}

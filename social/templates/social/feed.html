@@ -1,0 +1,32 @@
+{% extends "social/base.html" %}
+{% block title %}خانه – شبکه اجتماعی{% endblock %}
+
+{% block content %}
+  {% if user.is_authenticated %}
+    <a href="{% url 'social:post_create' %}"
+       class="mb-4 flex items-center justify-between rounded-xl border border-zinc-200 bg-white px-4 py-3 shadow-sm hover:border-indigo-300 dark:border-zinc-800 dark:bg-zinc-800 dark:hover:border-indigo-500">
+      <span class="text-zinc-500 dark:text-zinc-400">چه خبر؟ پست جدید بنویس…</span>
+      <span class="rounded-lg bg-indigo-600 px-3 py-1.5 text-sm text-white">پست جدید</span>
+    </a>
+  {% else %}
+    <div class="mb-4 rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-3 text-sm text-indigo-800 dark:border-indigo-900 dark:bg-indigo-950 dark:text-indigo-200">
+      برای دنبال کردن افراد و ساختن پست، <a href="{% url 'social:login' %}" class="font-semibold underline">وارد شوید</a>.
+    </div>
+  {% endif %}
+
+  <div id="posts-container">
+    {% include "social/_post_list_page.html" %}
+  </div>
+
+  {% if not posts %}
+    <div class="rounded-xl border border-dashed border-zinc-300 bg-white px-6 py-10 text-center text-zinc-500 dark:border-zinc-800 dark:bg-zinc-800 dark:text-zinc-400">
+      هنوز پستی برای نمایش نیست.
+      {% if user.is_authenticated %}
+        <div class="mt-2 text-sm">
+          <a href="{% url 'social:search' %}" class="text-indigo-600 hover:underline dark:text-indigo-400">کاربران را پیدا و دنبال کنید</a>
+          یا اولین پست خود را منتشر کنید.
+        </div>
+      {% endif %}
+    </div>
+  {% endif %}
+{% endblock %}

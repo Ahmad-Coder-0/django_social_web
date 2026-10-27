@@ -1,0 +1,9 @@
+{% extends "social/base.html" %}
+{% block title %}خروج{% endblock %}
+
+{% block content %}
+  <div class="rounded-xl border border-zinc-200 bg-white p-5 text-center shadow-sm">
+    <h1 class="mb-4 text-xl font-bold">از حساب کاربری خود خارج شدید.</h1>
+    <p class="text-zinc-600">می‌توانید دوباره <a href="{% url 'social:login' %}" class="font-semibold text-indigo-600 hover:underline">وارد شوید</a> یا به <a href="{% url 'social:feed' %}" class="font-semibold text-indigo-600 hover:underline">صفحه اصلی</a> برگردید.</p>
+  </div>
+{% endblock %}

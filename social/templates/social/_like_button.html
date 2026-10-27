@@ -1,0 +1,7 @@
+<form hx-post="{% url 'social:like_toggle' post.pk %}" hx-target="this" hx-swap="outerHTML" class="inline">
+  {% csrf_token %}
+  <button type="submit" class="flex items-center gap-1 rounded-md px-2 py-1 hover:bg-zinc-100 dark:hover:bg-zinc-800 {% if post.liked_by_me %}text-rose-600 dark:text-rose-400{% endif %}">
+    <span>{% if post.liked_by_me %}♥{% else %}♡{% endif %}</span>
+    <span>{{ post.num_likes }}</span>
+  </button>
+</form>

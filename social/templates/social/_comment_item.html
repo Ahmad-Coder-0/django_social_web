@@ -1,0 +1,10 @@
+<div class="flex gap-3 rounded-xl border border-zinc-200 bg-white px-3 py-2 shadow-sm dark:border-zinc-800 dark:bg-zinc-800">
+  {% include "social/_avatar.html" with u=comment.author size="h-8 w-8" %}
+  <div class="min-w-0 flex-1">
+    <a href="{% url 'social:profile' comment.author.username %}" class="text-sm font-semibold hover:underline">
+      {{ comment.author.get_full_name|default:comment.author.username }}
+    </a>
+    <p class="text-xs text-zinc-400">{{ comment.created_at|date:"Y/m/d – H:i" }}</p>
+    <p class="whitespace-pre-line text-sm leading-6 text-zinc-700 dark:text-zinc-300">{{ comment.body }}</p>
+  </div>
+</div>

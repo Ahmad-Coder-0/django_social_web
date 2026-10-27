@@ -1,0 +1,25 @@
+{% extends "social/base.html" %}
+{% block title %}پست جدید{% endblock %}
+
+{% block content %}
+  <div class="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
+    <h1 class="mb-4 text-lg font-bold">پست جدید</h1>
+    <form method="post" enctype="multipart/form-data" class="space-y-4">
+      {% csrf_token %}
+      {% if form.non_field_errors %}
+        <div class="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{{ form.non_field_errors }}</div>
+      {% endif %}
+      {% for field in form %}
+        <div>
+          <label for="{{ field.id_for_label }}" class="mb-1 block text-sm font-medium text-zinc-700">{{ field.label }}</label>
+          {{ field }}
+          {% if field.errors %}<ul class="errorlist">{% for error in field.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}
+        </div>
+      {% endfor %}
+      <div class="flex items-center justify-end gap-2">
+        <a href="{% url 'social:feed' %}" class="rounded-lg px-3 py-2 text-sm text-zinc-600 hover:bg-zinc-100">انصراف</a>
+        <button type="submit" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm text-white hover:bg-indigo-700">انتشار</button>
+      </div>
+    </form>
+  </div>
+{% endblock %}

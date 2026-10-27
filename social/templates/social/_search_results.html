@@ -1,0 +1,44 @@
+{% if query %}
+  {% if users %}
+    <h2 class="mb-2 mt-4 text-sm font-semibold text-zinc-700 dark:text-zinc-300">کاربران</h2>
+    <div class="mb-4 space-y-2">
+      {% for u in users %}
+        <a href="{% url 'social:profile' u.username %}" class="flex items-center gap-3 rounded-xl border border-zinc-200 bg-white px-4 py-2 shadow-sm hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-800 dark:hover:bg-zinc-700">
+          {% include "social/_avatar.html" with u=u size="h-8 w-8" %}
+          <div>
+            <span class="font-semibold text-zinc-800 dark:text-zinc-200">{{ u.get_full_name|default:u.username }}</span>
+            <span class="text-sm text-zinc-500 dark:text-zinc-400">@{{ u.username }}</span>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if posts %}
+    <h2 class="mb-2 mt-4 text-sm font-semibold text-zinc-700 dark:text-zinc-300">پست‌ها</h2>
+    <div class="space-y-4">
+      {% for post in posts %}
+        {% include "social/_post_card.html" %}
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if comments %}
+    <h2 class="mb-2 mt-4 text-sm font-semibold text-zinc-700 dark:text-zinc-300">نظرات</h2>
+    <div class="space-y-2">
+      {% for comment in comments %}
+        <div class="rounded-xl border border-zinc-200 bg-white px-4 py-3 shadow-sm dark:border-zinc-800 dark:bg-zinc-800">
+          <p class="text-sm text-zinc-500 dark:text-zinc-400 mb-1">
+            نظر <a href="{% url 'social:profile' comment.author.username %}" class="font-semibold text-zinc-800 dark:text-zinc-200">{{ comment.author.get_full_name|default:comment.author.username }}</a>
+            روی پست <a href="{% url 'social:post_detail' comment.post.pk %}" class="text-indigo-600 dark:text-indigo-400">"{{ comment.post.content|truncatechars:30 }}"</a>:
+          </p>
+          <p class="text-zinc-800 dark:text-zinc-200">{{ comment.body }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if not users and not posts and not comments %}
+    <p class="mt-8 text-center text-sm text-zinc-500 dark:text-zinc-400">هیچ نتیجه‌ای یافت نشد.</p>
+  {% endif %}
+{% endif %}

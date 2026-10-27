@@ -1,0 +1,12 @@
+{% for post in posts %}
+  {% include "social/_post_card.html" %}
+{% endfor %}
+
+{% if posts.has_next %}
+  <div class="py-4 text-center"
+       hx-get="?page={{ posts.next_page_number }}"
+       hx-trigger="revealed"
+       hx-swap="outerHTML">
+    <span class="text-sm text-zinc-500">در حال بارگذاری پست‌های بیشتر...</span>
+  </div>
+{% endif %}

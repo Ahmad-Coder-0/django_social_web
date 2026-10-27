@@ -1,0 +1,40 @@
+{% extends "social/base.html" %}
+{% block title %}اعلان‌ها{% endblock %}
+
+{% block content %}
+  <h1 class="mb-4 text-lg font-bold text-zinc-800 dark:text-zinc-100">اعلان‌ها</h1>
+
+  <div class="space-y-2">
+    {% for notif in notifications %}
+      <div class="flex items-center gap-3 rounded-xl border border-zinc-200 bg-white px-4 py-3 shadow-sm transition-colors duration-200 dark:border-zinc-800 dark:bg-zinc-800 {% if not notif.is_read %}bg-indigo-50 dark:bg-indigo-950{% endif %}">
+        {% include "social/_avatar.html" with u=notif.sender size="h-9 w-9" %}
+        <div class="min-w-0 flex-1">
+          {% if notif.notification_type == "like" %}
+            <p class="text-sm text-zinc-800 dark:text-zinc-200">
+              <a href="{% url 'social:profile' notif.sender.username %}" class="font-semibold hover:underline">{{ notif.sender.get_full_name|default:notif.sender.username }}</a>
+              پست شما را پسندید.
+            </p>
+          {% elif notif.notification_type == "comment" %}
+            <p class="text-sm text-zinc-800 dark:text-zinc-200">
+              <a href="{% url 'social:profile' notif.sender.username %}" class="font-semibold hover:underline">{{ notif.sender.get_full_name|default:notif.sender.username }}</a>
+              روی پست شما نظر داد.
+            </p>
+          {% elif notif.notification_type == "follow" %}
+            <p class="text-sm text-zinc-800 dark:text-zinc-200">
+              <a href="{% url 'social:profile' notif.sender.username %}" class="font-semibold hover:underline">{{ notif.sender.get_full_name|default:notif.sender.username }}</a>
+              شما را دنبال کرد.
+            </p>
+          {% endif %}
+          <p class="text-xs text-zinc-500 dark:text-zinc-400">{{ notif.created_at|date:"Y/m/d – H:i" }}</p>
+        </div>
+        {% if notif.post %}
+          <a href="{% url 'social:post_detail' notif.post.pk %}" class="text-indigo-600 text-sm hover:underline dark:text-indigo-400">مشاهده پست</a>
+        {% endif %}
+      </div>
+    {% empty %}
+      <p class="rounded-xl border border-dashed border-zinc-300 bg-white px-6 py-8 text-center text-sm text-zinc-500 dark:border-zinc-800 dark:bg-zinc-800 dark:text-zinc-400">
+        هیچ اعلانی ندارید.
+      </p>
+    {% endfor %}
+  </div>
+{% endblock %}
